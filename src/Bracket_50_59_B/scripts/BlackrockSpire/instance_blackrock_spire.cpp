@@ -65,7 +65,12 @@ public:
         {
             // If LFG, UBRS door always open
             if (Group const* group = player->GetGroup())
-                UBRSDoorOpen = sLFGMgr->IsLfgGroup(group->GetGUID());
+            {
+                if (sLFGMgr->IsLfgGroup(group->GetGUID()))
+                {
+                    UBRSDoorOpen = true;
+                }
+            }
         }
 
         void CreatureLooted(Creature* creature, LootType loot) override
