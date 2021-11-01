@@ -61,18 +61,6 @@ public:
             UBRSDoorOpen = false;
         }
 
-        void OnPlayerEnter(Player* player) override
-        {
-            // If LFG, UBRS door always open
-            if (Group const* group = player->GetGroup())
-            {
-                if (sLFGMgr->IsLfgGroup(group->GetGUID()))
-                {
-                    UBRSDoorOpen = true;
-                }
-            }
-        }
-
         void CreatureLooted(Creature* creature, LootType loot) override
         {
             switch (creature->GetEntry())
@@ -689,7 +677,17 @@ public:
             {
                 instance->SetData(AREATRIGGER_DRAGONSPIRE_HALL, DATA_DRAGONSPIRE_ROOM);
 
-                if (player->HasItemCount(ITEM_SEAL_OF_ASCENSION, 1))
+                // If LFG, UBRS door always closed
+                bool canOpenDoor = true;
+                if (Group const* group = player->GetGroup())
+                {
+                    if (sLFGMgr->IsLfgGroup(group->GetGUID()))
+                    {
+                        canOpenDoor = false;
+                    }
+                }
+
+                if (canOpenDoor && player->HasItemCount(ITEM_SEAL_OF_ASCENSION, 1))
                 {
                     instance->SetData(AREATRIGGER_DRAGONSPIRE_HALL, DATA_UBRS_DOOR_OPEN);
                 }
